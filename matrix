@@ -1,0 +1,38 @@
+#!/bin/bash
+#*********citation some code used/modeled from required reading********
+dim () {
+    lineNum=0
+    count=0
+    read myline < $1
+    for i in $myline    
+    do
+        count=`expr $count + 1`
+    done 
+
+    while read myLine
+    do
+        lineNum=`expr $lineNum + 1`
+    done < $1
+    printf "$lineNum "
+    printf "$count\n"
+}
+
+transpose () {
+    tmpCol="tmpColFile"
+    touch $tmpCol$$ #named with PID
+    dim $1 > /dev/null #get the size with dim
+echo "before loop count="
+echo $count
+for i in $count_I 
+    do
+        echo $count
+        echo $i
+        cut -f $1 >> $tmpCol$$ 
+    done < $1
+    cat $tmpCol$$
+    rm -f $tmpCol$$ #get rid of tempfile
+
+    
+}
+
+$1 "${@:2}"
