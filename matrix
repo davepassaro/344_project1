@@ -3,13 +3,13 @@
 dim () {
     lineNum=0
     count=0
-    read myline < $1
+    read myline < $1   #read one line from file and do for loop on nums in line
     for i in $myline    
     do
         count=`expr $count + 1`
     done 
 
-    while read myLine
+    while read myLine   #read entire doc line by line
     do
         lineNum=`expr $lineNum + 1`
     done < $1
@@ -20,19 +20,74 @@ dim () {
 transpose () {
     tmpCol="tmpColFile"
     touch $tmpCol$$ #named with PID
+    fnlCol="fnlColFile"
+    touch $fnlCol$$ #named with PID
     dim $1 > /dev/null #get the size with dim
-echo "before loop count="
-echo $count
-for i in $count_I 
-    do
-        echo $count
-        echo $i
-        cut -f $1 >> $tmpCol$$ 
-    done < $1
-    cat $tmpCol$$
-    rm -f $tmpCol$$ #get rid of tempfile
+#printf "%s\t%d\n" "before loop count=" "$count"
+#printf "%s\t%d\n" "before loop linenum=" "$lineNum"
 
-    
+i=1
+while [ $i -le $count ]
+    do
+       # printf "%s\t%d\n" "i= " "$i"
+        cut -f $i $1 > $tmpCol$$ #cut fields of cols one by one put in tmpCol
+        #cat $tmpCol$$
+        i=`expr $i + 1`
+        #j=1 
+        #while [ $j -le $lineNum ]
+        #do
+        cat $tmpCol$$ | tr '\n' '\t' >> "$fnlCol$$" #take tmpCol and append on fnlCol with newlines as tabs
+        echo "" >> $fnlCol$$    #add newline at end !!!!might have to change end to pass tests#$%$#$%$# 
+           # printf "%s\t%d\n" "j= " "$j"
+            #if [ $j -gt "1" ]
+            #then
+            #    cat $tempCol$$ | tr '\n' '\t' > "$fnlCol$$"
+            #fi
+           # j=$(expr $j + 1)
+        #done
+    done < $1
+
+    cat $fnlCol$$
+    echo ""
+    cat -A $fnlCol$$
+    rm -f $fnlCol$$ #get rid of tempfile
+    rm -f $tmpCol$$ #get rid of tempfile
 }
 
+mean () {
+    tmpCol="tmpColFile"
+    touch $tmpCol$$ #named with PID
+    fnlCol="fnlColFile"
+    touch $fnlCol$$ #named with PID
+    dim $1 > /dev/null #get the size with dim
+
+i=1
+while [ $i -le $count ]
+    do
+       # printf "%s\t%d\n" "i= " "$i"
+        cut -f $i $1 > $tmpCol$$ #cut fields of cols one by one put in tmpCol
+        #cat $tmpCol$$
+        sum=0
+        j=0
+        while read myfile #read line into loop 
+        do
+            sum=$(($sum + $myfile)) #sum up line into sum var
+        done < $tmpCol$$
+        sum=$(( ($sum + ($lineNum/2)*( ($sum>0)*2-1 )) / $lineNum )) #formula for proper rounding in div cited from assignment
+       #printf -- "%s" "$sum"
+        printf  -- "%s\t" "$sum"  >> "$fnlCol$$"
+        i=`expr $i + 1`
+
+    done < $1
+
+    cat $fnlCol$$
+    echo ""
+   # cat -A $fnlCol$$  #test tabs newlines
+    rm -f $fnlCol$$ #get rid of tempfile
+    rm -f $tmpCol$$ #get rid of tempfile
+}
 $1 "${@:2}"
+
+        #mean notes ***cat $tmpCol$$ | tr '\n' '\t' >> "$fnlCol$$" #take tmpCol and append on fnlCol with newlines as tabs
+        #echo "" >> $fnlCol$$    #add newline at end !!!!might have to change end to pass tests#$%$#$%$# 
+        
