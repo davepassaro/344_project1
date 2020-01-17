@@ -1,0 +1,27 @@
+    #!/bin/bash
+ while read line1 <&3 && read line2 <&4
+    do
+        while read -a  word1 <line1 && read -a word1 <line1
+        do 
+            echo "$word1"
+            echo "$word1"
+
+        done
+    done 3<$1 4<$2
+
+#            while read -a  word1 <&5 && read -a word1 <&6
+ #       do 
+  #          echo "$word1"
+   #         echo "$word2"
+    #    done 5<$tmpCol$$ 6<$fnlCol$$
+
+
+    #while [ $l -le $count ] #for each number in 1 line (should be same)
+      #  do 
+           # cut -f $l  $tmpCol$$ > #cut fields of cols one by one put in tmpCol
+        #cat $tmpCol$$
+         #   l=`expr $l + 1`
+
+       # done
+
+        #cat $tmpCol$$

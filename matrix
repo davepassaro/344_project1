@@ -22,9 +22,8 @@ transpose () {
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
     touch $fnlCol$$ #named with PID
-    dim $1 > /dev/null #get the size with dim
-#printf "%s\t%d\n" "before loop count=" "$count"
-#printf "%s\t%d\n" "before loop linenum=" "$lineNum"
+    dim $1 > /dev/null #get the size with dim --count = rows lineNum = col
+
 
 i=1
 while [ $i -le $count ]
@@ -33,18 +32,11 @@ while [ $i -le $count ]
         cut -f $i $1 > $tmpCol$$ #cut fields of cols one by one put in tmpCol
         #cat $tmpCol$$
         i=`expr $i + 1`
-        #j=1 
-        #while [ $j -le $lineNum ]
-        #do
+       
         cat $tmpCol$$ | tr '\n' '\t' >> "$fnlCol$$" #take tmpCol and append on fnlCol with newlines as tabs
-        echo "" >> $fnlCol$$    #add newline at end !!!!might have to change end to pass tests#$%$#$%$# 
-           # printf "%s\t%d\n" "j= " "$j"
-            #if [ $j -gt "1" ]
-            #then
-            #    cat $tempCol$$ | tr '\n' '\t' > "$fnlCol$$"
-            #fi
-           # j=$(expr $j + 1)
-        #done
+        echo "" >> $fnlCol$$    #add newline at end !!!
+        #!might have to change end to pass tests#$%$#$%$#  if =count skip changing to newline and echo skip
+         
     done < $1
 
     cat $fnlCol$$
@@ -59,7 +51,7 @@ mean () {
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
     touch $fnlCol$$ #named with PID
-    dim $1 > /dev/null #get the size with dim
+    dim $1 > /dev/null #get the size with dim --count = rows lineNum = col
 
 i=1
 while [ $i -le $count ]
@@ -85,6 +77,67 @@ while [ $i -le $count ]
    # cat -A $fnlCol$$  #test tabs newlines
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
+}
+
+
+
+
+add () {
+    tmpCol="tmpColFile"
+    touch $tmpCol$$ #named with PID
+    fnlCol="fnlColFile"
+    touch $fnlCol$$ #named with PID
+    final="FinalFile"
+    touch $final$$ #named with PID
+    dim $1 > /dev/null #get the size with dim --count = rows lineNum = col
+
+    i=1
+    
+    sum=0
+
+   # go back to transpose if wrong shape matrix!!!!!!!!!!!!!!    
+    while [ $i -le $lineNum ] #for each line (should be same)
+    do
+        echo "i = $i"
+        cat $1 | head -n $i | tail -n 1 > $tmpCol$$  #throw specified line in tmpCol file
+        cat $2 | head -n $i | tail -n 1 > $fnlCol$$
+        read myline1 < $tmpCol$$
+        read myline2 < $fnlCol$$
+        #echo "$myline1"
+        #echo "$myline2"
+        counter1=0
+        for j in $myline1 #double for loop for adding correct positions in input file to output file 
+        do
+            ((counter1++))
+            #echo "here $j"
+            counter2=0 #reset
+            
+            for k in $myline2
+            do
+                ((counter2++))
+                #echo "here $j"
+                if [ $counter1 -eq $counter2 ]
+                then
+                    #echo "liip"
+                    #echo "$counter1 eq $counter2 "
+                    #echo "$j and $k"
+                    sum=$(($j + $k)) #sum up line into sum var
+
+                    printf  -- "%s\t" "$sum"  >> "$final$$"
+                fi
+            done
+        done
+        echo "" >> $final$$
+        
+        i=`expr $i + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)
+        
+    done 
+    
+    cat  $final$$  #test tabs newlines
+    rm -f $fnlCol$$ #get rid of tempfile
+    rm -f $tmpCol$$ #get rid of tempfile
+    rm -f $final$$ #get rid of tempfile
+
 }
 $1 "${@:2}"
 
