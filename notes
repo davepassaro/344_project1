@@ -1,0 +1,35 @@
+    while read line1 <&3 && read line2 <&4
+        do
+            while read -a  word1 <line1 && read -a word1 <line1
+            do 
+                echo "$word1"
+                echo "$word1"
+
+            done
+        done 3<$1 4<$2
+        for i in $myLine
+        do
+            num=$i
+            count=`expr $count + 1`
+            echo "  Item $count: $num"
+            sum=`expr $sum + $num`
+        done
+    done < $1
+
+
+        matrix transpose $2 #> $tmpCol$$    
+    while [ $i -le $r1] #for each line (should be same)
+    do
+        while [ $j -le $c2 ] #for each line (should be same)
+        do
+            while [ $k -le $c1 ] #for each line (should be same)
+            do
+                #c[i][j]=c[i][j]+a[i][k]*b[k][j]
+                #cat $1 | head -n $i | tail -n 1 > $tmpCol$$  #throw specified line in tmpCol file
+
+                k=`expr $k + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)            
+            done 
+            j=`expr $j + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)
+        done 
+        i=`expr $i + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)    
+    done 

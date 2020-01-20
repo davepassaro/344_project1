@@ -1,5 +1,9 @@
 #!/bin/bash
 #*********citation some code used/modeled from required reading********
+
+#to do: transpose  matricies before add! validation files
+# and mult AXB to BXC and add same size-- ect, rmv tab at end 
+#use remove last char in assignment 
 dim () {
     lineNum=0
     count=0
@@ -17,6 +21,14 @@ dim () {
     printf "$count\n"
 }
 
+
+
+
+
+
+
+
+
 transpose () {
     tmpCol="tmpColFile"
     touch $tmpCol$$ #named with PID
@@ -32,8 +44,12 @@ while [ $i -le $count ]
         cut -f $i $1 > $tmpCol$$ #cut fields of cols one by one put in tmpCol
         #cat $tmpCol$$
         i=`expr $i + 1`
-       
+        #truncate -s-1  $fnlCol$$
+
         cat $tmpCol$$ | tr '\n' '\t' >> "$fnlCol$$" #take tmpCol and append on fnlCol with newlines as tabs
+       # cat -A $fnlCol$$  
+        truncate -s-1  $fnlCol$$
+   
         echo "" >> $fnlCol$$    #add newline at end !!!
         #!might have to change end to pass tests#$%$#$%$#  if =count skip changing to newline and echo skip
          
@@ -45,6 +61,13 @@ while [ $i -le $count ]
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
 }
+
+
+
+
+
+
+
 
 mean () {
     tmpCol="tmpColFile"
@@ -82,6 +105,12 @@ while [ $i -le $count ]
 
 
 
+
+
+
+
+
+
 add () {
     tmpCol="tmpColFile"
     touch $tmpCol$$ #named with PID
@@ -107,7 +136,7 @@ add () {
         #echo "$myline2"
         counter1=0
         for j in $myline1 #double for loop for adding correct positions in input file to output file 
-        do
+        do #
             ((counter1++))
             #echo "here $j"
             counter2=0 #reset
@@ -116,9 +145,9 @@ add () {
             do
                 ((counter2++))
                 #echo "here $j"
-                if [ $counter1 -eq $counter2 ]
-                then
-                    #echo "liip"
+                if [ $counter1 -eq $counter2 ]#where they are equal is the position to add - here we are modeling a 
+                then                          #counting variable for grabbing values out of the line where inner will  
+                    #echo "liip"              #equal outer as in file 1 "a b c" file 2 "a b c"
                     #echo "$counter1 eq $counter2 "
                     #echo "$j and $k"
                     sum=$(($j + $k)) #sum up line into sum var
@@ -139,6 +168,92 @@ add () {
     rm -f $final$$ #get rid of tempfile
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+multiply () {
+    tmpCol="tmpColFile"
+    touch $tmpCol$$ #named with PID
+    fnlCol="fnlColFile"
+    touch $fnlCol$$ #named with PID
+    final="FinalFile"
+    touch $final$$ #named with PID
+    dim $1 > $tmpCol$$ #get the size with dim --count = rows lineNum = col
+    counter=0
+
+
+   # cat $tmpCol$$
+    while read line; do
+        for word in $line; do
+            if [ $counter -eq 0 ]
+                then
+                   
+                    r1=$word
+                else 
+                    c1=$word
+                    
+                fi
+            ((counter++))
+        done
+    done <  $tmpCol$$
+    dim $2 > $tmpCol$$ #get the size with dim --count = rows lineNum = col
+    counter=0
+    while read line; do
+        for word in $line; do
+            if [ $counter -eq 0 ]
+                then
+               
+                    r2=$word
+                else 
+                    c2=$word
+   
+                fi
+            ((counter++))
+        done
+    done <  $tmpCol$$
+    echo "$r1 $c1 $r2 $c2"
+
+    i=1
+    k=1
+    j=1
+    sum=0
+    matrix transpose $2 > $tmpCol$$    
+    cat $tmpCol$$
+    while [ $i -le $r1 ]  #for each line (should be same)
+    do
+        while [ $j -le $c2 ] #for each line (should be same)
+        do
+            while [ $k -le $c1 ] #for each line (should be same)
+            do
+                #c[i][j]=c[i][j]+a[i][k]*b[k][j]
+                #cat $1 | head -n $i | tail -n 1 >> $tmpCol$$  #throw specified line in tmpCol file y
+                #cut -f $i $1 > $tmpCol$$ #cut fields of cols one by one put in tmpCol
+
+                k=`expr $k + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)            
+            done 
+            j=`expr $j + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)
+        done 
+        i=`expr $i + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)    
+    done 
+
+    
+    #cat  $final$$  #test tabs newlines
+    rm -f $fnlCol$$ #get rid of tempfile
+    rm -f $tmpCol$$ #get rid of tempfile
+    rm -f $final$$ #get rid of tempfile
+
+}
+
+
 $1 "${@:2}"
 
         #mean notes ***cat $tmpCol$$ | tr '\n' '\t' >> "$fnlCol$$" #take tmpCol and append on fnlCol with newlines as tabs
