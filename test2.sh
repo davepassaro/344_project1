@@ -64,7 +64,7 @@
 
 
 
-    printf "h" > $final
+    #printf "h" > $final
     #cat $final
     i=1
     sum=0
@@ -79,11 +79,11 @@
                 cat $1 | head -n $i | tail -n 1 | cut -f $k > $tmp  #throw specified line in tmpCol file y
                 a=$(<$tmp)
                 #echo "a=$a"
-                cat $2 | head -n $k | tail -n 1 | cut -f $j #> $tmp  #throw specified line in tmpCol file y
+                cat $2 | head -n $k | tail -n 1 | cut -f $j > $tmp  #throw specified line in tmpCol file y
                 b=$(<$tmp)
                 #echo "b=$b"
                 sum=$(( $sum+($a * $b) ))
-                echo "sum=$sum a=$a b=$b"
+                #echo "sum=$sum a=$a b=$b"
                 ((k++))
             done
             #if [ $j -eq $c2 ]
@@ -92,6 +92,7 @@
             #else 
             #    printf -- "%s\n" "$sum" >> $final 
             #fi
+            echo "sum=$sum"
             sum=0
             ((j++))
         done
@@ -99,7 +100,7 @@
         ((i++))
     done
     
-    cat  $final  #test tabs newlines
+   # cat  $final  #test tabs newlines
     echo ""
     rm -f $tmp2 #get rid of tempfile
     rm -f $tmp #get rid of tempfile
