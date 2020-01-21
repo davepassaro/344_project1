@@ -1,9 +1,11 @@
 #!/bin/bash
 #*********citation some code used/modeled from required reading********
 
-#to do: transpose  matricies before add! validation files
+#to do: transpose  matricies before mult ---follow add logic!!!!!!!!!!!!!!!
+#! validation files
 # and mult AXB to BXC and add same size-- ect, rmv tab at end 
 #use remove last char in assignment 
+
 dim () {
     lineNum=0
     count=0
@@ -57,7 +59,7 @@ while [ $i -le $count ]
 
     cat $fnlCol$$
     echo ""
-    cat -A $fnlCol$$
+   # cat -A $fnlCol$$
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
 }

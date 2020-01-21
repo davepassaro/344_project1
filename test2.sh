@@ -19,8 +19,8 @@
     
     tmp="tmpColFile$$"
     touch $tmp #named with PID
-    #fnlCol="fnlColFile"
-    #touch $fnlCol$$ #named with PID
+    tmp2="tmpFile2$$" #named with PID
+    touch $tmp2
     final="FinalFile$$"
     touch $final #named with PID
     matrix dim $1 > $final #get the size with dim --count = rows lineNum = col
@@ -67,32 +67,43 @@
     printf "h" > $final
     #cat $final
     i=1
-
+    sum=0
     while [ $i -le $r1 ]
     do
         j=1
-        while [ $j -le $c1 ]
+        while [ $j -le $c2 ]
         do  
             k=1
-            #while [ $k -le $c1 ]
-            #do  
-                cat $1 | head -n $i | tail -n 1 | cut -f $j > $tmp  #throw specified line in tmpCol file y
-                val1=$(<$tmp)
-                echo "val1= $val1"
-
-                #echo "$x"
-                #((k++))
-            #done
+            while [ $k -le $c1 ]
+            do  
+                cat $1 | head -n $i | tail -n 1 | cut -f $k > $tmp  #throw specified line in tmpCol file y
+                a=$(<$tmp)
+                #echo "a=$a"
+                cat $2 | head -n $k | tail -n 1 | cut -f $j #> $tmp  #throw specified line in tmpCol file y
+                b=$(<$tmp)
+                #echo "b=$b"
+                sum=$(( $sum+($a * $b) ))
+                echo "sum=$sum a=$a b=$b"
+                ((k++))
+            done
+            #if [ $j -eq $c2 ]
+            #then
+            #    printf -- "%s\t" "$sum" >> $final 
+            #else 
+            #    printf -- "%s\n" "$sum" >> $final 
+            #fi
+            sum=0
             ((j++))
         done
         #echo "i= $i"
         ((i++))
     done
     
-    #cat  $final$$  #test tabs newlines
-    #rm -f $fnlCol$$ #get rid of tempfile
-    #rm -f $tmpCol$$ #get rid of tempfile
-    #rm -f $final$$ #get rid of tempfile
+    cat  $final  #test tabs newlines
+    echo ""
+    rm -f $tmp2 #get rid of tempfile
+    rm -f $tmp #get rid of tempfile
+    rm -f $final #get rid of tempfile
 
 #rm -f $tmp
 #            while read -a  word1 <&5 && read -a word1 <&6
@@ -111,3 +122,7 @@
        # done
 
         #cat $tmpCol$$
+        
+                #echo "$value"
+                #cut -f $i $1 > $tmpCol$$ #cut fields of cols one by one put in tmpCol
+                #echo "$x"
