@@ -6,7 +6,7 @@
 # and mult AXB to BXC and add same size-- ect, rmv tab at end 
 #use remove last char in assignment 
 
-dim () {
+dims () {
     lineNum=0
     count=0
     read myline < $1   #read one line from file and do for loop on nums in line
@@ -36,7 +36,9 @@ transpose () {
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
     touch $fnlCol$$ #named with PID
-    dim $1 > /dev/null #get the size with dim --count = rows lineNum = col
+    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; exit 1" INT EXIT HUP
+
+    dims $1 > /dev/null #get the size with dim --count = rows lineNum = col
 
 
 i=1
@@ -57,7 +59,7 @@ while [ $i -le $count ]
          
     done < $1
 
-    cat $fnlCol$$
+    cat  $fnlCol$$
     echo ""
    # cat -A $fnlCol$$
     rm -f $fnlCol$$ #get rid of tempfile
@@ -76,7 +78,9 @@ mean () {
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
     touch $fnlCol$$ #named with PID
-    dim $1 > /dev/null #get the size with dim --count = rows lineNum = col
+    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; exit 1" INT EXIT HUP
+    
+    dims $1 > /dev/null #get the size with dim --count = rows lineNum = col
 
 i=1
 while [ $i -le $count ]
@@ -96,10 +100,11 @@ while [ $i -le $count ]
         i=`expr $i + 1`
 
     done < $1
+    truncate -s-1  $fnlCol$$
+    #echo "" >> $fnlCol$$
+    cat  $fnlCol$$
 
-    cat $fnlCol$$
-    echo ""
-   # cat -A $fnlCol$$  #test tabs newlines
+    cat -A $fnlCol$$  #test tabs newlines
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
 }
@@ -120,16 +125,33 @@ add () {
     touch $fnlCol$$ #named with PID
     final="FinalFile"
     touch $final$$ #named with PID
-    dim $1 > /dev/null #get the size with dim --count = rows lineNum = col
+    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $final$$; exit 1" INT EXIT HUP
+   
+    dims $1 > $final$$ #get the size with dim --   r1= rows c1  = col of first matrix
+    counter=0
+    #grab the dimentions of the 2 matricies
+    r1=$lineNum
+    c1=$count
+    dims $2 > $final$$ #get the size with dim --  r2 = rows c2 = col of second matrix input
+    r2=$lineNum
+    c2=$count
+    #echo "$r1 $c1 $r2 $c2"
+    printf "" > $final$$
+    if [ $r1 -ne $r2 ] || [ $c2 -ne $c1 ]
+    then 
+        echo   "Matrix sizes not equal for add operation, exiting"  1>&2
+        exit 1
+    fi
+    dims $1 > /dev/null #get the size with dim --count = rows lineNum = col
 
     i=1
-    
+
     sum=0
 
-   # go back to transpose if wrong shape matrix!!!!!!!!!!!!!!    
+# go back to transpose if wrong shape matrix!!!!!!!!!!!!!!    
     while [ $i -le $lineNum ] #for each line (should be same)
     do
-        echo "i = $i"
+        #echo "i = $i"
         cat $1 | head -n $i | tail -n 1 > $tmpCol$$  #throw specified line in tmpCol file
         cat $2 | head -n $i | tail -n 1 > $fnlCol$$
         read myline1 < $tmpCol$$
@@ -138,37 +160,41 @@ add () {
         #echo "$myline2"
         counter1=0
         for j in $myline1 #double for loop for adding correct positions in input file to output file 
-        do #
+        do
             ((counter1++))
             #echo "here $j"
             counter2=0 #reset
-            
+
             for k in $myline2
             do
                 ((counter2++))
                 #echo "here $j"
-                if [ $counter1 -eq $counter2 ]#where they are equal is the position to add - here we are modeling a 
-                then                          #counting variable for grabbing values out of the line where inner will  
-                    #echo "liip"              #equal outer as in file 1 "a b c" file 2 "a b c"
+                if [ $counter1 -eq $counter2 ]
+                then
+                    #echo "liip"
                     #echo "$counter1 eq $counter2 "
                     #echo "$j and $k"
                     sum=$(($j + $k)) #sum up line into sum var
 
-                    printf  -- "%s\t" "$sum"  >> "$final$$"
+                    if [ $counter2 -eq $count ]
+                    then
+                        printf -- "%s\n" "$sum" >> $final$$ 
+                    else 
+                        printf -- "%s\t" "$sum" >> $final$$ 
+                    fi
                 fi
             done
         done
-        echo "" >> $final$$
-        
+        #echo "" >> $final$$
+
         i=`expr $i + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)
-        
+
     done 
-    
+
     cat  $final$$  #test tabs newlines
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
     rm -f $final$$ #get rid of tempfile
-
 }
 
 
@@ -183,75 +209,64 @@ add () {
 
 
 multiply () {
-    tmpCol="tmpColFile"
-    touch $tmpCol$$ #named with PID
-    fnlCol="fnlColFile"
-    touch $fnlCol$$ #named with PID
-    final="FinalFile"
-    touch $final$$ #named with PID
-    dim $1 > $tmpCol$$ #get the size with dim --count = rows lineNum = col
+    tmp="tmpColFile$$"
+    touch $tmp #named with PID
+
+    final="FinalFile$$"
+    touch $final #named with PID
+    trap "rm -f $final; rm -f $tmp; exit 1" INT EXIT HUP
+
+    dims $1 > $final #get the size with dim --   r1= rows c1  = col of first matrix
     counter=0
-
-
-   # cat $tmpCol$$
-    while read line; do
-        for word in $line; do
-            if [ $counter -eq 0 ]
-                then
-                   
-                    r1=$word
-                else 
-                    c1=$word
-                    
-                fi
-            ((counter++))
-        done
-    done <  $tmpCol$$
-    dim $2 > $tmpCol$$ #get the size with dim --count = rows lineNum = col
-    counter=0
-    while read line; do
-        for word in $line; do
-            if [ $counter -eq 0 ]
-                then
-               
-                    r2=$word
-                else 
-                    c2=$word
-   
-                fi
-            ((counter++))
-        done
-    done <  $tmpCol$$
-    echo "$r1 $c1 $r2 $c2"
-
+    #grab the dimentions of the 2 matricies
+    dims $1 > $final #get the size with dim --   r1= rows c1  = col of first matrix
+     #grab the dimentions of the 2 matricies
+    r1=$lineNum
+    c1=$count
+     dims $2 > $final #get the size with dim --  r2 = rows c2 = col of second matrix input
+    r2=$lineNum
+    c2=$count
+    #echo "$r1 $c1 $r2 $c2"
+    printf "" > $final
+    printf "" > $final
     i=1
-    k=1
-    j=1
     sum=0
-    matrix transpose $2 > $tmpCol$$    
-    cat $tmpCol$$
-    while [ $i -le $r1 ]  #for each line (should be same)
+    if [ $c1 -ne $r2 ]
+    then 
+        echo   "Matrix 1 columns not equal to Matrix 2 rows for multiply operation, exiting"  1>&2
+        exit 1
+    fi
+    while [ $i -le $r1 ]
     do
-        while [ $j -le $c2 ] #for each line (should be same)
-        do
-            while [ $k -le $c1 ] #for each line (should be same)
-            do
-                #c[i][j]=c[i][j]+a[i][k]*b[k][j]
-                #cat $1 | head -n $i | tail -n 1 >> $tmpCol$$  #throw specified line in tmpCol file y
-                #cut -f $i $1 > $tmpCol$$ #cut fields of cols one by one put in tmpCol
+        j=1
+        while [ $j -le $c2 ]
+        do  
+            k=1
+            while [ $k -le $c1 ]
+            do  
+                cat $1 | head -n $i | tail -n 1 | cut -f $k > $tmp  #throw specified line in tmpCol file y
+                a=$(<$tmp)
+                cat $2 | head -n $k | tail -n 1 | cut -f $j > $tmp  #throw specified line in tmpCol file y
+                b=$(<$tmp)
+                sum=$(( $sum+($a * $b) ))
+                ((k++))
+            done
 
-                k=`expr $k + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)            
-            done 
-            j=`expr $j + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)
-        done 
-        i=`expr $i + 1`        #while [ $j -le $count ] #for each number in 1 line (should be same)    
-    done 
-
+            if [ $j -eq $c2 ]
+            then
+                printf -- "%s\n" "$sum" >> $final 
+            else 
+                printf -- "%s\t" "$sum" >> $final 
+            fi
+            sum=0
+            ((j++))
+        done
+        ((i++))
+    done
     
-    #cat  $final$$  #test tabs newlines
-    rm -f $fnlCol$$ #get rid of tempfile
-    rm -f $tmpCol$$ #get rid of tempfile
-    rm -f $final$$ #get rid of tempfile
+    cat  $final  #test tabs newlines
+    rm -f $tmp #get rid of tempfile
+    rm -f $final #get rid of tempfile
 
 }
 

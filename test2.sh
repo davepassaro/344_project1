@@ -68,7 +68,7 @@
         ((i++))
     done
     
-    cat -A $final  #test tabs newlines
+    cat  $final  #test tabs newlines
     rm -f $tmp #get rid of tempfile
     rm -f $final #get rid of tempfile
 
