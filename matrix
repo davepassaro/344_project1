@@ -7,6 +7,16 @@
 #use remove last char in assignment 
 
 dims () {
+
+    if [ "$#" -ne 1 ]
+    then
+        echo "error" 1>&2
+        exit 1
+    elif [ ! -e $1 ]
+    then   
+        echo "error" 1>&2
+        exit 1
+    fi
     lineNum=0
     count=0
     read myline < $1   #read one line from file and do for loop on nums in line
@@ -32,6 +42,15 @@ dims () {
 
 
 transpose () {
+     if [ "$#" -ne 1 ]
+    then
+        echo "error" 1>&2
+        exit 1
+    elif [ ! -e $1 ]
+    then   
+        echo "error" 1>&2
+        exit 1
+    fi
     tmpCol="tmpColFile"
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
@@ -74,6 +93,16 @@ while [ $i -le $count ]
 
 
 mean () {
+    if [ "$#" -ne 1 ]
+    then
+        echo "error" 1>&2
+        exit 1
+    elif [ ! -e $1 ]
+    then   
+        echo "error" 1>&2
+        exit 1
+    fi
+    
     tmpCol="tmpColFile"
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
@@ -101,10 +130,10 @@ while [ $i -le $count ]
 
     done < $1
     truncate -s-1  $fnlCol$$
-    #echo "" >> $fnlCol$$
+    echo "" >> $fnlCol$$
     cat  $fnlCol$$
 
-    cat -A $fnlCol$$  #test tabs newlines
+    #cat -A $fnlCol$$  #test tabs newlines
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
 }
@@ -119,6 +148,20 @@ while [ $i -le $count ]
 
 
 add () {
+    if [ "$#" -ne 2 ]
+    then
+        echo "error" 1>&2
+        exit 1
+    elif [ ! -e $1 ]
+    then   
+        echo "error" 1>&2
+        exit 1
+    elif [ ! -e $2 ]
+    then   
+        echo "error" 1>&2
+        exit 1
+    fi
+    
     tmpCol="tmpColFile"
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
@@ -126,7 +169,7 @@ add () {
     final="FinalFile"
     touch $final$$ #named with PID
     trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $final$$; exit 1" INT EXIT HUP
-   
+    
     dims $1 > $final$$ #get the size with dim --   r1= rows c1  = col of first matrix
     counter=0
     #grab the dimentions of the 2 matricies
@@ -209,6 +252,20 @@ add () {
 
 
 multiply () {
+    if [ "$#" -ne 2 ]
+    then
+        echo "error" 1>&2
+        exit 1
+    elif [ ! -e $1 ]
+    then   
+        echo "error" 1>&2
+        exit 1
+    elif [ ! -e $2 ]
+    then   
+        echo "error" 1>&2
+        exit 1
+    fi
+    
     tmp="tmpColFile$$"
     touch $tmp #named with PID
 
