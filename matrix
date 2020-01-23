@@ -7,8 +7,16 @@
 #use remove last char in assignment 
 
 dims () {
+    trap "rm -f $input; exit 1" INT EXIT HUP
 
-    if [ "$#" -ne 1 ]
+    if [ "$#" -eq 0 ]
+    then
+        input=inputFile$$
+        touch $input
+        echo "cat > input"
+        cat > $input
+
+    elif [ "$#" -ne 1 ]
     then
         echo "error" 1>&2
         exit 1
@@ -19,7 +27,14 @@ dims () {
     fi
     lineNum=0
     count=0
-    read myline < $1   #read one line from file and do for loop on nums in line
+    input="inputFile$$"
+    if [ ! -e $input ]  
+    then    
+        input=inputFile$$
+        touch $input
+        cat $1 > $input
+    fi
+    read myline < $input #read one line from file and do for loop on nums in line
     for i in $myline    
     do
         count=`expr $count + 1`
@@ -28,9 +43,10 @@ dims () {
     while read myLine   #read entire doc line by line
     do
         lineNum=`expr $lineNum + 1`
-    done < $1
+    done < $input
     printf "$lineNum "
     printf "$count\n"
+    rm -f $input
 }
 
 
@@ -329,7 +345,3 @@ multiply () {
 
 
 $1 "${@:2}"
-
-        #mean notes ***cat $tmpCol$$ | tr '\n' '\t' >> "$fnlCol$$" #take tmpCol and append on fnlCol with newlines as tabs
-        #echo "" >> $fnlCol$$    #add newline at end !!!!might have to change end to pass tests#$%$#$%$# 
-        

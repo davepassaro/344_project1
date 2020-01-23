@@ -1,7 +1,5 @@
 Dims with 2 arguments should throw error (1pt):
-- Returned 0
-- stdout is non-empty
-- stderr is empty
++ Passed!
 Add with 0 arguments should throw error (1pt):
 + Passed!
 Multiply mismatched matrices should throw error (5pt):
@@ -9,19 +7,21 @@ Multiply mismatched matrices should throw error (5pt):
 Adding mismatched matrices should throw error (4pt):
 + Passed!
 Transposing undreadable file should throw error (2pt):
-- stdout is non-empty
++ Passed!
 Dims on nonexistent file should throw error (1pt):
-- Returned 0
-- stdout is non-empty
++ Passed!
 badcommand should throw error (1pt):
 + Passed!
 Piping m1 (5x6) into dims (3pt):
+- Returned 1
 - dimensions output is incorrect
 - stderr is non-empty
 Piping m2 (6x7) into dims (3pt):
+- Returned 1
 - dimensions output is incorrect
 - stderr is non-empty
 Piping m3 (3x8) into dims (3pt):
+- Returned 1
 - dimensions output is incorrect
 - stderr is non-empty
 Passing m4 (8x5) to dims on stdin (3pt):
@@ -47,16 +47,12 @@ Transpose involution test on m5 (5pt):
 - Transpose is not involutory
 Mean on hardcoded matrix (15pt):
 - Returned 1
-- Output result does not match known result
 Mean on 5x10 zero matrix (2pt):
 - Returned 1
-- Output result does not match known result
 Mean on 5x10 all ones matrix (5pt):
 - Returned 1
-- Output result does not match known result
 Mean on 10x10 identity matrix (5pt):
 - Returned 1
-- Output result does not match known result
 0 + 0 == 0? (2pt):
 - Returned 1
 X + 0 == X? (5pt):
