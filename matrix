@@ -133,7 +133,14 @@ while [ $i -le $count ]
 
 
 mean () {
-    if [ "$#" -ne 1 ]
+    if [ "$#" -eq 0 ]
+    then
+        input=inputFile$$
+        touch $input
+        #echo "cat > input"
+        cat > $input
+
+    elif [ "$#" -ne 1 ]
     then
         echo "error" 1>&2
         exit 1
@@ -142,20 +149,32 @@ mean () {
         echo "error" 1>&2
         exit 1
     fi
-    
+   
+    input="inputFile$$"
+    if [ ! -e $input ]  
+    then    
+        #echo " if args"
+        input=inputFile$$
+        touch $input
+        cat $1 > $input
+        #cat $input
+    fi
     tmpCol="tmpColFile"
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
     touch $fnlCol$$ #named with PID
-    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; exit 1" INT EXIT HUP
-    
-    dims $1 > /dev/null #get the size with dim --count = rows lineNum = col
-
+    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $input; exit 1" INT EXIT HUP
+    tmp="tmpfileM$$"
+    touch $tmp
+    cat $input > $tmp
+    dims $input > /dev/null #get the size with dim --count = rows lineNum = col
+    cat $tmp > $input
+    rm -f $tmp
 i=1
 while [ $i -le $count ]
     do
        # printf "%s\t%d\n" "i= " "$i"
-        cut -f $i $1 > $tmpCol$$ #cut fields of cols one by one put in tmpCol
+        cut -f $i $input > $tmpCol$$ #cut fields of cols one by one put in tmpCol
         #cat $tmpCol$$
         sum=0
         j=0
@@ -168,12 +187,13 @@ while [ $i -le $count ]
         printf  -- "%s\t" "$sum"  >> "$fnlCol$$"
         i=`expr $i + 1`
 
-    done < $1
+    done < $input
     truncate -s-1  $fnlCol$$
     echo "" >> $fnlCol$$
     cat  $fnlCol$$
 
     #cat -A $fnlCol$$  #test tabs newlines
+    rm -f $input
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
 }
