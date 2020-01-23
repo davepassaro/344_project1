@@ -7,7 +7,7 @@
 #use remove last char in assignment 
 
 dims () {
-    trap "rm -f $inputD; exit 1" INT EXIT HUP
+    trap "rm -f $inputD; exit" INT  HUP TERM
 
     if [ "$#" -eq 0 ]
     then
@@ -46,6 +46,7 @@ dims () {
     printf "$lineNum "
     printf "$count\n"
     rm -f $inputD
+    return 0
 }
 
 
@@ -87,7 +88,7 @@ transpose () {
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
     touch $fnlCol$$ #named with PID
-    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $input; exit 1" INT EXIT HUP
+    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $input; exit;" INT  HUP TERM
     tmp="tmptrp$$"
     touch $tmp
     cat $input > $tmp
@@ -118,11 +119,12 @@ while [ $i -le $count ]
     done < $input
 
     cat  $fnlCol$$
-    echo ""
+    #echo ""
    # cat -A $fnlCol$$
     rm -f $input
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
+    return 0
 }
 
 
@@ -163,7 +165,7 @@ mean () {
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
     touch $fnlCol$$ #named with PID
-    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $input; exit 1" INT EXIT HUP
+    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $input; exit; " INT  HUP TERM
     tmp="tmpfileM$$"
     touch $tmp
     cat $input > $tmp
@@ -196,6 +198,8 @@ while [ $i -le $count ]
     rm -f $input
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
+    return 0
+
 }
 
 
@@ -228,7 +232,7 @@ add () {
     touch $fnlCol$$ #named with PID
     final="FinalFile"
     touch $final$$ #named with PID
-    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $final$$; exit 1" INT EXIT HUP
+    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $final$$; exit;" INT  HUP TERM
     
     dims $1 > $final$$ #get the size with dim --   r1= rows c1  = col of first matrix
     counter=0
@@ -298,6 +302,8 @@ add () {
     rm -f $fnlCol$$ #get rid of tempfile
     rm -f $tmpCol$$ #get rid of tempfile
     rm -f $final$$ #get rid of tempfile
+    return 0
+
 }
 
 
@@ -331,7 +337,7 @@ multiply () {
 
     final="FinalFile$$"
     touch $final #named with PID
-    trap "rm -f $final; rm -f $tmp; exit 1" INT EXIT HUP
+    trap "rm -f $final; rm -f $tmp; exit; " INT  HUP TERM
 
     dims $1 > $final #get the size with dim --   r1= rows c1  = col of first matrix
     counter=0
@@ -384,8 +390,10 @@ multiply () {
     cat  $final  #test tabs newlines
     rm -f $tmp #get rid of tempfile
     rm -f $final #get rid of tempfile
+    return 0
 
 }
 
 
 $1 "${@:2}"
+exit 0
