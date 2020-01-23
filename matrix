@@ -247,6 +247,9 @@ add () {
     if [ $r1 -ne $r2 ] || [ $c2 -ne $c1 ]
     then 
         echo   "Matrix sizes not equal for add operation, exiting"  1>&2
+        rm -f $fnlCol$$ #get rid of tempfile
+        rm -f $tmpCol$$ #get rid of tempfile
+        rm -f $final$$ #get rid of tempfile
         exit 1
     fi
     dims $1 > /dev/null #get the size with dim --count = rows lineNum = col
@@ -357,6 +360,8 @@ multiply () {
     if [ $c1 -ne $r2 ]
     then 
         echo   "Matrix 1 columns not equal to Matrix 2 rows for multiply operation, exiting"  1>&2
+        rm -f $tmp #get rid of tempfile
+        rm -f $final #get rid of tempfile
         exit 1
     fi
     while [ $i -le $r1 ]

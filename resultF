@@ -7,65 +7,54 @@ Multiply mismatched matrices should throw error (5pt):
 Adding mismatched matrices should throw error (4pt):
 + Passed!
 Transposing undreadable file should throw error (2pt):
-- stdout is non-empty
++ Passed!
 Dims on nonexistent file should throw error (1pt):
 + Passed!
 badcommand should throw error (1pt):
 + Passed!
 Piping m1 (5x6) into dims (3pt):
-- Returned 1
-- dimensions output is incorrect
++ Passed!
 Piping m2 (6x7) into dims (3pt):
-- Returned 1
-- dimensions output is incorrect
++ Passed!
 Piping m3 (3x8) into dims (3pt):
-- Returned 1
-- dimensions output is incorrect
++ Passed!
 Passing m4 (8x5) to dims on stdin (3pt):
-- Returned 1
++ Passed!
 Passing m1 (5x6) to dims on stdin (3pt):
-- Returned 1
++ Passed!
 Passing m2 (6x7) to dims on stdin (3pt):
-- Returned 1
++ Passed!
 Transposing hardcoded matrix (10pt):
-- Returned 1
-- Transposed matrix does not match known result
++ Passed!
 Transpose involution test on m3 (5pt):
-- Returned 1
-- Returned 1
-- Transpose is not involutory
++ Passed!
 Transpose involution test on m4 (5pt):
-- Returned 1
-- Returned 1
-- Transpose is not involutory
++ Passed!
 Transpose involution test on m5 (5pt):
-- Returned 1
-- Returned 1
-- Transpose is not involutory
++ Passed!
 Mean on hardcoded matrix (15pt):
-- Returned 1
++ Passed!
 Mean on 5x10 zero matrix (2pt):
-- Returned 1
++ Passed!
 Mean on 5x10 all ones matrix (5pt):
-- Returned 1
++ Passed!
 Mean on 10x10 identity matrix (5pt):
-- Returned 1
++ Passed!
 0 + 0 == 0? (2pt):
-- Returned 1
++ Passed!
 X + 0 == X? (5pt):
-- Returned 1
++ Passed!
 0 + X == X? (5pt):
-- Returned 1
++ Passed!
 A + B == B + A? (1pt):
-- Returned 1
-- Returned 1
++ Passed!
 (harcoded) A + B == C? (15pt):
-- Returned 1
++ Passed!
 I * M == M? (5pt):
-- Returned 1
++ Passed!
 M * I == M? (5pt):
-- Returned 1
++ Passed!
 0 * M == 0? (5pt):
-- Returned 1
++ Passed!
 (hardcoded) A * B == C? (20pt):
-- Returned 1
++ Passed!
