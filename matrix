@@ -393,7 +393,13 @@ multiply () {
     return 0
 
 }
+#echo "$1"
+if [ $1 != "dims" ] && [ $1 != "transpose" ] && [ $1 != "mean" ] && [ $1 != "add" ] && [ $1 != "multiply" ] 
+    then
+        echo "error" 1>&2
+        exit 1
+fi
 
-
+#echo "got here"
 $1 "${@:2}"
 exit 0
