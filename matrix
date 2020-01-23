@@ -20,7 +20,7 @@ dims () {
     then
         echo "error" 1>&2
         exit 1
-    elif [ ! -e $1 ]
+    elif [ ! -e $1 ] || [ ! -r $1 ]
     then   
         echo "error" 1>&2
         exit 1
@@ -68,7 +68,7 @@ transpose () {
     then
         echo "error" 1>&2
         exit 1
-    elif [ ! -e $1 ]
+    elif [ ! -e $1 ] || [ ! -r $1 ]
     then   
         echo "error" 1>&2
         exit 1
@@ -144,7 +144,7 @@ mean () {
     then
         echo "error" 1>&2
         exit 1
-    elif [ ! -e $1 ]
+    elif [ ! -e $1 ]  || [ ! -r $1 ]
     then   
         echo "error" 1>&2
         exit 1
@@ -212,11 +212,11 @@ add () {
     then
         echo "error" 1>&2
         exit 1
-    elif [ ! -e $1 ]
+    elif [ ! -e $1 ] || [ ! -r $1 ]
     then   
         echo "error" 1>&2
         exit 1
-    elif [ ! -e $2 ]
+    elif [ ! -e $2 ] || [ ! -r $2 ]
     then   
         echo "error" 1>&2
         exit 1
@@ -316,11 +316,11 @@ multiply () {
     then
         echo "error" 1>&2
         exit 1
-    elif [ ! -e $1 ]
+    elif [ ! -e $1 ] || [ ! -r $1 ]
     then   
         echo "error" 1>&2
         exit 1
-    elif [ ! -e $2 ]
+    elif [ ! -e $2 ] || [ ! -r $2 ]
     then   
         echo "error" 1>&2
         exit 1
