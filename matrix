@@ -7,8 +7,56 @@
 #use remove last char in assignment 
 
 dims () {
-    trap "rm -f $input; exit 1" INT EXIT HUP
+    trap "rm -f $inputD; exit 1" INT EXIT HUP
 
+    if [ "$#" -eq 0 ]
+    then
+        inputD=inputFile$$
+        touch $inputD
+        echo "cat > input"
+        cat > $inputD
+
+    elif [ "$#" -ne 1 ]
+    then
+        echo "error" 1>&2
+        exit 1
+    elif [ ! -e $1 ]
+    then   
+        echo "error" 1>&2
+        exit 1
+    fi
+    lineNum=0
+    count=0
+    inputD="inputFile$$"
+    if [ ! -e $inputD ]  
+    then    
+        touch $inputD
+        cat $1 > $inputD
+    fi
+    read myline < $inputD #read one line from file and do for loop on nums in line
+    for i in $myline    
+    do
+        count=`expr $count + 1`
+    done 
+
+    while read myLine   #read entire doc line by line
+    do
+        lineNum=`expr $lineNum + 1`
+    done < $inputD
+    printf "$lineNum "
+    printf "$count\n"
+    rm -f $inputD
+}
+
+
+
+
+
+
+
+
+
+transpose () {
     if [ "$#" -eq 0 ]
     then
         input=inputFile$$
@@ -25,62 +73,29 @@ dims () {
         echo "error" 1>&2
         exit 1
     fi
-    lineNum=0
-    count=0
+   
     input="inputFile$$"
     if [ ! -e $input ]  
     then    
         input=inputFile$$
         touch $input
         cat $1 > $input
-    fi
-    read myline < $input #read one line from file and do for loop on nums in line
-    for i in $myline    
-    do
-        count=`expr $count + 1`
-    done 
-
-    while read myLine   #read entire doc line by line
-    do
-        lineNum=`expr $lineNum + 1`
-    done < $input
-    printf "$lineNum "
-    printf "$count\n"
-    rm -f $input
-}
-
-
-
-
-
-
-
-
-
-transpose () {
-     if [ "$#" -ne 1 ]
-    then
-        echo "error" 1>&2
-        exit 1
-    elif [ ! -e $1 ]
-    then   
-        echo "error" 1>&2
-        exit 1
+        #cat $input
     fi
     tmpCol="tmpColFile"
     touch $tmpCol$$ #named with PID
     fnlCol="fnlColFile"
     touch $fnlCol$$ #named with PID
-    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; exit 1" INT EXIT HUP
-
-    dims $1 > /dev/null #get the size with dim --count = rows lineNum = col
-
-
-i=1
+    trap "rm -f $tmpCol$$; rm -f $fnlCol$$; rm -f $input; exit 1" INT EXIT HUP
+    
+    cat input | dims > /dev/null #get the size with dim --count = rows lineNum = col
+    #echo "$lineNum $count"
+    cat $input
+    i=1
 while [ $i -le $count ]
     do
        # printf "%s\t%d\n" "i= " "$i"
-        cut -f $i $1 > $tmpCol$$ #cut fields of cols one by one put in tmpCol
+        cut -f $i $input > $tmpCol$$ #cut fields of cols one by one put in tmpCol
         #cat $tmpCol$$
         i=`expr $i + 1`
         #truncate -s-1  $fnlCol$$
@@ -92,7 +107,7 @@ while [ $i -le $count ]
         echo "" >> $fnlCol$$    #add newline at end !!!
         #!might have to change end to pass tests#$%$#$%$#  if =count skip changing to newline and echo skip
          
-    done < $1
+    done 
 
     cat  $fnlCol$$
     echo ""
