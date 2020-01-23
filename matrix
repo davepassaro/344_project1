@@ -27,7 +27,7 @@ dims () {
     fi
     lineNum=0
     count=0
-    inputD="inputFile$$"
+    inputD="inputDims$$"
     if [ ! -e $inputD ]  
     then    
         touch $inputD
